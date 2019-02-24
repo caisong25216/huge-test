@@ -22,8 +22,8 @@ def getAll(starturl, pageCount):
         t1 = soup.find_all(class_="s xst")
         for tips in t1:
             url_2 = "http://bbs.ieltschn.com/" + tips["href"]
-            req2 = requests.get(url_2, proxies={"http": "http://{}".format(proxy)})
-            #req2 = requests.get(url_2)
+            #req2 = requests.get(url_2, proxies={"http": "http://{}".format(proxy)})
+            req2 = requests.get(url_2)
             if req2.status_code != 200:
                 return text_lst
             soup2 = BeautifulSoup(req2.content, "html.parser")
@@ -49,6 +49,7 @@ if __name__ =="__main__":
     # lst1 = getAll(u"http://bbs.ieltschn.com/forum.php?mod=forumdisplay&fid=53&page=", 29)
     # print("lst1: has ", len(lst1))
     # print(lst1)
+    '''
     lst2 = getAll(u"http://bbs.ieltschn.com/forum.php?mod=forumdisplay&fid=99&page=", 13)
     print("lst2: has ", len(lst2))
     print(lst2)
@@ -58,6 +59,7 @@ if __name__ =="__main__":
     lst4 = getAll(u"http://bbs.ieltschn.com/forum.php?mod=forumdisplay&fid=89&page=", 3)
     print("lst4: has ", len(lst4))
     print(lst4)
+    '''
     lst5 = getAll(u"http://bbs.ieltschn.com/forum.php?mod=forumdisplay&fid=80&page=", 9)
     print("lst5: has ", len(lst5))
     print(lst5)
