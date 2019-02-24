@@ -39,10 +39,10 @@ def getAll(starturl, pageCount):
 
 
 def get_proxy():
-    return requests.get("http://118.24.79.211:9184/get/").content
+    return requests.get("http://***/get/").content
 
 def delete_proxy(proxy):
-    requests.get("http://118.24.79.211:9184/delete/?proxy={}".format(proxy))
+    requests.get("http://***/delete/?proxy={}".format(proxy))
 
 if __name__ =="__main__":
     # dd = get_proxy().decode("utf-8")
