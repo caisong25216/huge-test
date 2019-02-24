@@ -1,31 +1,43 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# import random
+import logging.handlers
 import random
-
 import requests
 import time
 from bs4 import BeautifulSoup
 import re
 
+
+LOG_FILE = 'scanCrontab.log'
+
+handler = logging.handlers.RotatingFileHandler(LOG_FILE, maxBytes=1024 * 1024, backupCount=5)  #
+fmt = '%(asctime)s - %(filename)s:%(lineno)s - %(name)s - %(message)s'
+formatter = logging.Formatter(fmt)  #
+handler.setFormatter(formatter)  #
+
+logger = logging.getLogger('tst')  #
+logger.addHandler(handler)  #
+logger.setLevel(logging.DEBUG)
 pattern = re.compile(u"(.*香港.*)|(.*澳门.*)|(.*台湾.*)|(.*韩国.*)|(.*泰国.*)|(.*越南.*)|(.*首尔.*)|(.*曼谷.*)|(.*胡志明.*)")
 
 def getAll(starturl, pageCount):
     text_lst = []
-    proxy = get_proxy().decode("utf-8")
+    # proxy = get_proxy().decode("utf-8")
     for x in range(1, pageCount):
         url = starturl+str(x)
         req = requests.get(url)
         if req.status_code != 200:
             return text_lst
+        logger.debug("title requests success!")
         soup = BeautifulSoup(req.content, "html.parser")
         t1 = soup.find_all(class_="s xst")
         for tips in t1:
             url_2 = "http://bbs.ieltschn.com/" + tips["href"]
-            req2 = requests.get(url_2, proxies={"http": "http://{}".format(proxy)})
-            #req2 = requests.get(url_2)
+            # req2 = requests.get(url_2, proxies={"http": "http://{}".format(proxy)})
+            req2 = requests.get(url_2)
             if req2.status_code != 200:
-                return text_lst
+                return
+            logger.debug("contents requests success!")
             soup2 = BeautifulSoup(req2.content, "html.parser")
             contents = soup2.find_all(class_="t_fsz")
             for c in contents:
@@ -34,15 +46,10 @@ def getAll(starturl, pageCount):
                     if pattern.search(tt):
                         result = "http://bbs.ieltschn.com/" + tips["href"] + "," + tt.replace(",", "")+"\n"
                         text_lst.append(result)
+                        logger.debug("catch one results!")
             time.sleep(random.random()*10)
     return text_lst
 
-
-def get_proxy():
-    return requests.get("http://118.24.79.211:9184/get/").content
-
-def delete_proxy(proxy):
-    requests.get("http://118.24.79.211:9184/delete/?proxy={}".format(proxy))
 
 if __name__ =="__main__":
     # dd = get_proxy().decode("utf-8")
@@ -73,5 +80,4 @@ if __name__ =="__main__":
 
     with open("getYa.txt", "w") as w:
         w.writelines(lst2)
-
 
